@@ -1,0 +1,109 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  username      String    @unique
+  password      String
+  displayName   String?
+  avatar        String?
+  bio           String?
+  level         Int       @default(1)
+  xp            Int       @default(0)
+  streak        Int       @default(0)
+  maxStreak     Int       @default(0)
+  gamesPlayed   Int       @default(0)
+  gamesWon      Int       @default(0)
+  totalScore    Int       @default(0)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
+  achievements  Achievement[]
+  gameSessions  GameSession[]
+  dailyChallenges DailyChallenge[]
+  friends       Friendship[] @relation("UserFriends")
+  friendsOf     Friendship[] @relation("FriendOf")
+  
+  @@index([email])
+  @@index([username])
+}
+
+model Achievement {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type        String
+  title       String
+  description String
+  icon        String?
+  unlockedAt  DateTime @default(now())
+  
+  @@index([userId])
+}
+
+model GameSession {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  gameType    String
+  score       Int
+  won         Boolean
+  duration    Int
+  difficulty  Int
+  completedAt DateTime @default(now())
+  
+  @@index([userId])
+  @@index([gameType])
+}
+
+model DailyChallenge {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  date        String
+  expression  String
+  values      String   // JSON string
+  solved      Boolean  @default(false)
+  attempts    Int      @default(0)
+  solvedAt    DateTime?
+  
+  @@unique([userId, date])
+  @@index([date])
+}
+
+model Friendship {
+  id         String   @id @default(cuid())
+  userId     String
+  user       User     @relation("UserFriends", fields: [userId], references: [id], onDelete: Cascade)
+  friendId   String
+  friend     User     @relation("FriendOf", fields: [friendId], references: [id], onDelete: Cascade)
+  status     String   @default("pending") // pending, accepted, rejected
+  createdAt  DateTime @default(now())
+  
+  @@unique([userId, friendId])
+  @@index([userId])
+  @@index([friendId])
+}
+
+model Leaderboard {
+  id          String   @id @default(cuid())
+  userId      String   @unique
+  username    String
+  score       Int
+  level       Int
+  gamesWon    Int
+  updatedAt   DateTime @updatedAt
+  
+  @@index([score])
+  @@index([level])
+}
