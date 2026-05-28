@@ -24,22 +24,11 @@ function App() {
           {/* Public routes */}
           <Route path="/" element={<HomePage />} />
           
-          {/* Public routes for demo */}
-          <Route path="/academia" element={<Layout />}>
-            <Route index element={<AcademiaPage />} />
-          </Route>
-          
-          <Route path="/minijuegos" element={<Layout />}>
-            <Route index element={<MinijuegosPage />} />
-          </Route>
-          
-          <Route path="/games/bomba" element={<Layout />}>
-            <Route index element={<BombaGamePage />} />
-          </Route>
-          
-          <Route path="/games/guardia" element={<Layout />}>
-            <Route index element={<GuardiaGamePage />} />
-          </Route>
+          {/* Public routes for demo - wrapped in Layout */}
+          <Route path="/academia" element={<Layout><AcademiaPage /></Layout>} />
+          <Route path="/minijuegos" element={<Layout><MinijuegosPage /></Layout>} />
+          <Route path="/games/bomba" element={<Layout><BombaGamePage /></Layout>} />
+          <Route path="/games/guardia" element={<Layout><GuardiaGamePage /></Layout>} />
           
           {/* Catch all */}
           <Route path="*" element={<Navigate to="/" replace />} />

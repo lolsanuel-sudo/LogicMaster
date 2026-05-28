@@ -8,7 +8,7 @@ const navigation = [
   { name: 'Minijuegos', href: '/minijuegos', icon: Gamepad2 },
 ]
 
-export default function Layout() {
+export default function Layout({ children }: { children: React.ReactNode }) {
   const location = useLocation()
 
   return (
@@ -53,7 +53,7 @@ export default function Layout() {
 
       {/* Main content */}
       <main className="ml-64">
-        <Outlet />
+        {children}
       </main>
     </div>
   )
