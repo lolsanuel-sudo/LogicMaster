@@ -1,26 +1,15 @@
 import { Outlet, Link, useLocation } from 'react-router-dom'
-import { Brain, BookOpen, Gamepad2, User, Trophy, LogOut } from 'lucide-react'
-import { useAuthStore } from '../store/authStore'
+import { Brain, BookOpen, Gamepad2, Home } from 'lucide-react'
 import { cn } from '../lib/utils'
 
 const navigation = [
+  { name: 'Inicio', href: '/', icon: Home },
   { name: 'Academia', href: '/academia', icon: BookOpen },
   { name: 'Minijuegos', href: '/minijuegos', icon: Gamepad2 },
-  { name: 'Leaderboard', href: '/leaderboard', icon: Trophy },
-  { name: 'Perfil', href: '/perfil', icon: User },
 ]
 
 export default function Layout() {
   const location = useLocation()
-  const { user, logout } = useAuthStore()
-
-  // Demo user for presentation
-  const demoUser = user || {
-    displayName: 'Usuario Demo',
-    username: 'demo',
-    level: 5,
-    xp: 1250,
-  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
@@ -35,24 +24,6 @@ export default function Layout() {
             <div>
               <h1 className="text-xl font-bold text-white">LogicMaster</h1>
               <p className="text-xs text-slate-400">Lógica Proposicional</p>
-            </div>
-          </div>
-
-          {/* User info */}
-          <div className="border-b border-slate-800 p-4">
-            <div className="flex items-center gap-3">
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-green-500 to-emerald-600">
-                <span className="text-lg font-bold text-white">
-                  {demoUser?.displayName?.[0]?.toUpperCase() || demoUser?.username[0]?.toUpperCase()}
-                </span>
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="truncate text-sm font-medium text-white">{demoUser?.displayName || demoUser?.username}</p>
-                <div className="flex items-center gap-2">
-                  <span className="text-xs text-slate-400">Nivel {demoUser?.level}</span>
-                  <span className="text-xs text-blue-400">{demoUser?.xp} XP</span>
-                </div>
-              </div>
             </div>
           </div>
 
@@ -77,19 +48,6 @@ export default function Layout() {
               )
             })}
           </nav>
-
-          {/* Logout - only show if authenticated */}
-          {user && (
-            <div className="border-t border-slate-800 p-4">
-              <button
-                onClick={logout}
-                className="flex w-full items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium text-slate-400 transition-all hover:bg-red-500/10 hover:text-red-400"
-              >
-                <LogOut className="h-5 w-5" />
-                Cerrar Sesión
-              </button>
-            </div>
-          )}
         </div>
       </aside>
 
