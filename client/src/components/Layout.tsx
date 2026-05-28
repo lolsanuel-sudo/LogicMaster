@@ -14,6 +14,14 @@ export default function Layout() {
   const location = useLocation()
   const { user, logout } = useAuthStore()
 
+  // Demo user for presentation
+  const demoUser = user || {
+    displayName: 'Usuario Demo',
+    username: 'demo',
+    level: 5,
+    xp: 1250,
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
       {/* Sidebar */}
@@ -35,14 +43,14 @@ export default function Layout() {
             <div className="flex items-center gap-3">
               <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-green-500 to-emerald-600">
                 <span className="text-lg font-bold text-white">
-                  {user?.displayName?.[0]?.toUpperCase() || user?.username[0]?.toUpperCase()}
+                  {demoUser?.displayName?.[0]?.toUpperCase() || demoUser?.username[0]?.toUpperCase()}
                 </span>
               </div>
               <div className="flex-1 min-w-0">
-                <p className="truncate text-sm font-medium text-white">{user?.displayName || user?.username}</p>
+                <p className="truncate text-sm font-medium text-white">{demoUser?.displayName || demoUser?.username}</p>
                 <div className="flex items-center gap-2">
-                  <span className="text-xs text-slate-400">Nivel {user?.level}</span>
-                  <span className="text-xs text-blue-400">{user?.xp} XP</span>
+                  <span className="text-xs text-slate-400">Nivel {demoUser?.level}</span>
+                  <span className="text-xs text-blue-400">{demoUser?.xp} XP</span>
                 </div>
               </div>
             </div>
@@ -70,16 +78,18 @@ export default function Layout() {
             })}
           </nav>
 
-          {/* Logout */}
-          <div className="border-t border-slate-800 p-4">
-            <button
-              onClick={logout}
-              className="flex w-full items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium text-slate-400 transition-all hover:bg-red-500/10 hover:text-red-400"
-            >
-              <LogOut className="h-5 w-5" />
-              Cerrar Sesión
-            </button>
-          </div>
+          {/* Logout - only show if authenticated */}
+          {user && (
+            <div className="border-t border-slate-800 p-4">
+              <button
+                onClick={logout}
+                className="flex w-full items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium text-slate-400 transition-all hover:bg-red-500/10 hover:text-red-400"
+              >
+                <LogOut className="h-5 w-5" />
+                Cerrar Sesión
+              </button>
+            </div>
+          )}
         </div>
       </aside>
 
