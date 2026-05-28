@@ -41,53 +41,34 @@ function App() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           
-          {/* Protected routes */}
-          <Route path="/academia" element={
-            <ProtectedRoute>
-              <Layout />
-            </ProtectedRoute>
-          }>
+          {/* Public routes for demo */}
+          <Route path="/academia" element={<Layout />}>
             <Route index element={<AcademiaPage />} />
           </Route>
           
-          <Route path="/minijuegos" element={
-            <ProtectedRoute>
-              <Layout />
-            </ProtectedRoute>
-          }>
+          <Route path="/minijuegos" element={<Layout />}>
             <Route index element={<MinijuegosPage />} />
           </Route>
           
+          <Route path="/leaderboard" element={<Layout />}>
+            <Route index element={<LeaderboardPage />} />
+          </Route>
+          
+          <Route path="/games/bomba" element={<Layout />}>
+            <Route index element={<BombaGamePage />} />
+          </Route>
+          
+          <Route path="/games/guardia" element={<Layout />}>
+            <Route index element={<GuardiaGamePage />} />
+          </Route>
+          
+          {/* Protected routes */}
           <Route path="/perfil" element={
             <ProtectedRoute>
               <Layout />
             </ProtectedRoute>
           }>
             <Route index element={<PerfilPage />} />
-          </Route>
-          
-          <Route path="/leaderboard" element={
-            <ProtectedRoute>
-              <Layout />
-            </ProtectedRoute>
-          }>
-            <Route index element={<LeaderboardPage />} />
-          </Route>
-          
-          <Route path="/games/bomba" element={
-            <ProtectedRoute>
-              <Layout />
-            </ProtectedRoute>
-          }>
-            <Route index element={<BombaGamePage />} />
-          </Route>
-          
-          <Route path="/games/guardia" element={
-            <ProtectedRoute>
-              <Layout />
-            </ProtectedRoute>
-          }>
-            <Route index element={<GuardiaGamePage />} />
           </Route>
           
           {/* Catch all */}
