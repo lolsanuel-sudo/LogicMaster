@@ -2,15 +2,11 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Shield, CheckCircle, XCircle, RefreshCw } from 'lucide-react'
-import { useAuthStore } from '../../store/authStore'
-import { gamesAPI } from '../../lib/api'
 import Button from '../../components/ui/Button'
 import { Card, CardContent } from '../../components/ui/Card'
 
 export default function GuardiaGamePage() {
   const navigate = useNavigate()
-  const user = useAuthStore((state) => state.user)
-  const updateUser = useAuthStore((state) => state.updateUser)
 
   const [gameState, setGameState] = useState<'idle' | 'playing' | 'result'>('idle')
   const [puzzle, setPuzzle] = useState<{ question: string; options: string[]; answer: string } | null>(null)
@@ -20,45 +16,31 @@ export default function GuardiaGamePage() {
     startNewGame()
   }, [])
 
-  const startNewGame = async () => {
-    try {
-      const response = await gamesAPI.generate('guardia', user?.level)
-      setPuzzle(response.data)
-      setResult(null)
-      setGameState('playing')
-    } catch (error) {
-      console.error('Error generating game:', error)
-    }
+  const startNewGame = () => {
+    // Demo data
+    const puzzles = [
+      { question: 'Si A es verdadero y B es falso, entonces A AND B es...', options: ['Verdadero', 'Falso'], answer: 'Falso' },
+      { question: 'Si A es verdadero o B es falso, entonces A OR B es...', options: ['Verdadero', 'Falso'], answer: 'Verdadero' },
+      { question: 'La negación de verdadero es...', options: ['Verdadero', 'Falso'], answer: 'Falso' },
+      { question: 'Si A implica B y A es verdadero, entonces B es...', options: ['Verdadero', 'Falso'], answer: 'Verdadero' },
+    ]
+    const random = puzzles[Math.floor(Math.random() * puzzles.length)]
+    
+    setPuzzle(random)
+    setResult(null)
+    setGameState('playing')
   }
 
-  const makeChoice = async (choice: string) => {
+  const makeChoice = (choice: string) => {
     if (gameState !== 'playing' || !puzzle) return
 
-    try {
-      const response = await gamesAPI.submitGuardia({
-        question: puzzle.question,
-        answer: choice,
-        duration: 0,
-      })
-
-      setResult({
-        won: response.data.won,
-        correctAnswer: response.data.correctAnswer,
-        xp: response.data.xp,
-      })
-
-      if (response.data.won) {
-        updateUser({
-          xp: (user?.xp || 0) + response.data.xp,
-          streak: response.data.streak,
-          totalScore: (user?.totalScore || 0) + 15,
-        })
-      }
-
-      setGameState('result')
-    } catch (error) {
-      console.error('Error submitting answer:', error)
-    }
+    const won = choice === puzzle.answer
+    setResult({
+      won,
+      correctAnswer: puzzle.answer,
+      xp: won ? 50 : 0,
+    })
+    setGameState('result')
   }
 
   return (

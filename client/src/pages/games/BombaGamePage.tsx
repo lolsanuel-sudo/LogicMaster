@@ -2,19 +2,16 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Bomb, Clock, CheckCircle, XCircle, RefreshCw } from 'lucide-react'
-import { useAuthStore } from '../../store/authStore'
-import { gamesAPI } from '../../lib/api'
 import Button from '../../components/ui/Button'
 import { Card, CardContent } from '../../components/ui/Card'
 
 export default function BombaGamePage() {
   const navigate = useNavigate()
-  const user = useAuthStore((state) => state.user)
-  const updateUser = useAuthStore((state) => state.updateUser)
 
   const [gameState, setGameState] = useState<'idle' | 'playing' | 'result'>('idle')
   const [expression, setExpression] = useState('')
   const [values, setValues] = useState<Record<string, boolean>>({})
+  const [correctAnswer, setCorrectAnswer] = useState<boolean>(false)
   const [timeLeft, setTimeLeft] = useState(10)
   const [result, setResult] = useState<{ won: boolean; correctAnswer: boolean; xp: number } | null>(null)
 
@@ -32,53 +29,39 @@ export default function BombaGamePage() {
     return () => clearTimeout(timer)
   }, [timeLeft, gameState])
 
-  const startNewGame = async () => {
-    try {
-      const response = await gamesAPI.generate('bomba', user?.level)
-      setExpression(response.data.expression)
-      setValues(response.data.values)
-      setTimeLeft(10)
-      setResult(null)
-      setGameState('playing')
-    } catch (error) {
-      console.error('Error generating game:', error)
-    }
+  const startNewGame = () => {
+    // Demo data
+    const expressions = [
+      { expr: 'A AND B', vals: { A: true, B: false }, correct: false },
+      { expr: 'A OR B', vals: { A: true, B: false }, correct: true },
+      { expr: 'NOT A', vals: { A: true }, correct: false },
+      { expr: 'A AND (B OR C)', vals: { A: true, B: false, C: true }, correct: true },
+    ]
+    const random = expressions[Math.floor(Math.random() * expressions.length)]
+    
+    setExpression(random.expr)
+    setValues(random.vals as Record<string, boolean>)
+    setCorrectAnswer(random.correct)
+    setTimeLeft(10)
+    setResult(null)
+    setGameState('playing')
   }
 
   const handleTimeExpired = () => {
     setGameState('result')
-    setResult({ won: false, correctAnswer: false, xp: 0 })
+    setResult({ won: false, correctAnswer: correctAnswer, xp: 0 })
   }
 
-  const makeChoice = async (choice: boolean) => {
+  const makeChoice = (choice: boolean) => {
     if (gameState !== 'playing') return
 
-    try {
-      const response = await gamesAPI.submitBomba({
-        expression,
-        values,
-        answer: choice,
-        duration: 10 - timeLeft,
-      })
-
-      setResult({
-        won: response.data.won,
-        correctAnswer: response.data.correctAnswer,
-        xp: response.data.xp,
-      })
-
-      if (response.data.won) {
-        updateUser({
-          xp: (user?.xp || 0) + response.data.xp,
-          streak: response.data.streak,
-          totalScore: (user?.totalScore || 0) + (10 - timeLeft),
-        })
-      }
-
-      setGameState('result')
-    } catch (error) {
-      console.error('Error submitting answer:', error)
-    }
+    const won = choice === correctAnswer
+    setResult({
+      won,
+      correctAnswer: correctAnswer,
+      xp: won ? 50 : 0,
+    })
+    setGameState('result')
   }
 
   const getTimerColor = () => {
