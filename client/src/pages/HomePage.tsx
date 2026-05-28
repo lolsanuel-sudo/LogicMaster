@@ -15,14 +15,14 @@ export default function HomePage() {
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 mb-12">
-            <Link to="/register">
+            <Link to="/academia">
               <Button className="bg-green-500 hover:bg-green-600 text-white px-8 py-4 text-lg">
                 Comenzar Gratis
               </Button>
             </Link>
-            <Link to="/login">
+            <Link to="/minijuegos">
               <Button className="bg-blue-500 hover:bg-blue-600 text-white px-8 py-4 text-lg">
-                Iniciar Sesión
+                Jugar Ahora
               </Button>
             </Link>
           </div>
